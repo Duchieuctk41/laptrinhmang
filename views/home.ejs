@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #do,
+        #xanh,
+        #vang {
+            width: 300px;
+            height: 70px;
+        }
+        
+        #do {
+            background-color: red;
+        }
+        
+        #xanh {
+            background-color: green;
+        }
+        
+        #vang {
+            background-color: yellow;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io("http://localhost:3000");
+        socket.on("Server-send-Register-false", function() {
+            alert('Ten dang ky da ton tai');
+        });
+
+        socket.on("Server-send-arrayUsers", function(data) {
+            $('#boxContent').html('')
+            data.forEach(element => {
+                $('#boxContent').append('<div class="user">' + element + '</div>')
+            });
+        });
+
+        socket.on("Server-send-Register-true", function(data) {
+            $('#currentUser').html(data);
+            $('#loginForm').hide(2000);
+            $('#chatForm').show(1000);
+        });
+
+        socket.on("server-send-Messages", function(data) {
+            $('#listMessages').append('<div "class= ms">' + data.un + ' : ' + data.nd + '</div>');
+        });
+
+        socket.on("someone-are-writing", function(data) {
+            $('#announce').html('<img src="./image/typing_Imessage.gif">' + data);
+        });
+        socket.on("someone-are-stop-writing", function(data) {
+            $('#announce').html("");
+        });
+
+        /*-----------------------------------------------------------------------------------*/
+        $(document).ready(function() {
+            $('#loginForm').show();
+            $('#chatForm').hide();
+            $('#txtMessages').focusin(function() {
+                socket.emit("I-am-writing")
+            });
+
+            $('#txtMessages').focusout(function() {
+                socket.emit("I-am-not-writing")
+            });
+
+            $('#btnRegister').click(function() {
+                socket.emit("Client-send-UserName", $("#txtUserName").val());
+            });
+
+            $('#btnLogOut').click(function() {
+                socket.emit("logout");
+                $('#loginForm').show(1000);
+                $('#chatForm').hide(2000);
+            });
+
+            $('#btnSendMessages').click(function() {
+                socket.emit("user-send-Messages", $('#txtMessages').val())
+            })
+        });
+    </script>
+</head>
+
+<body bgcolor="pink">
+    <h1>Chat RealTime</h1>
+    <div id="wraper">
+        <div id="loginForm">
+            <h3>what is your name?</h3>
+            <input type="text" id="txtUserName">
+            <input type="button" value="Register" id="btnRegister">
+        </div>
+
+        <div id="chatForm">
+
+            <div id="left">
+                <div id="boxTitle">User Online</div>
+                <div id="boxContent">
+
+                </div>
+
+            </div>
+            <div id="right">
+                <div id="sayHi">
+                    Hello <span id="currentUser">Teo</span>
+                    <input type="button" value="Log Out" id="btnLogOut">
+
+                </div>
+                <div id="listMessages">
+                </div>
+                <div id="announce"></div>
+                <input type="text" id="txtMessages">
+                <input type="button" id="btnSendMessages" value="Send">
+
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>
