@@ -4,6 +4,107 @@
     box-sizing: border-box;
 }
 
+#loginForm {
+    font-family: montserrat;
+    background: linear-gradient(120deg, #2980b9, #8e44ad);
+    height: 100vh;
+}
+
+.content-login-form {
+    top: 25%;
+    left: 35%;
+    width: 400px;
+    position: absolute;
+}
+
+.content-login-form h1 {
+    text-align: center;
+    padding: 0 0 20px 0;
+    color: #eee;
+    border-bottom: 1px solid white;
+}
+
+.txt_field {
+    position: relative;
+    border-bottom: 2px solid white;
+    margin: 30px 0;
+}
+
+.txt_field input {
+    width: 100%;
+    color: white;
+    text-align: center;
+    font-size: 16px;
+    padding: 0 5px;
+    height: 40px;
+    font-size: 16px;
+    border: none;
+    background: none;
+    outline: none;
+}
+
+.txt_field label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    color: white;
+    transform: translate(-50%);
+    font-size: 22px;
+    pointer-events: none;
+    transition: .5s;
+}
+
+.txt_field span::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background: #2691d9;
+    transition: .7s;
+}
+
+.txt_field input:focus~label,
+.txt_field input:valid~label {
+    top: -20px;
+    color: #2691d9;
+}
+
+.txt_field input:focus~span::before,
+.txt_field input:valid~span::before {
+    width: 100%;
+}
+
+.submit-login-form {
+    margin-top: 30px;
+    height: 50px;
+}
+
+#btnRegister {
+    position: absolute;
+    left: 23%;
+    font-size: 18px;
+    letter-spacing: 3px;
+    width: 200px;
+    color: #fff !important;
+    text-transform: uppercase;
+    text-decoration: none;
+    background: #60a3bc;
+    padding: 10px;
+    border-radius: 50px;
+    display: inline-block;
+    border: none;
+    transition: all 0.4s ease 0s;
+}
+
+#btnRegister:hover {
+    text-shadow: 0px 0px 6px rgba(255, 255, 255, 1);
+    -webkit-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.57);
+    -moz-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.57);
+    transition: all 0.4s ease 0s;
+}
+
 .container {
     width: 100%;
     height: 100%;
@@ -165,20 +266,26 @@
     background-color: #eee;
     margin-top: 10px;
     margin-left: 5px;
+    outline: none;
 }
 
 .user-main-container {
     width: 100%;
     margin-top: 10px;
+    height: 100%;
 }
 
 .user-main-container-inside {
     border-radius: 5px;
-    margin-left: 10px;
+    margin: 1px;
     margin-right: 10px;
     height: 70px;
     background-color: #eee;
     overflow: hidden;
+}
+
+.user-main-container-inside:hover {
+    background-color: pink;
 }
 
 .user-main-inside {
@@ -203,6 +310,7 @@
 .user-main-image img {
     width: 100%;
     height: 100%;
+    border-radius: 50%;
 }
 
 .user-main-name {
@@ -225,18 +333,6 @@
 
 .user-last-message.date {
     width: 20%;
-}
-
-.user-main-image {
-    width: 60px;
-    height: 60px;
-    margin-left: 5px;
-    margin-top: 5px;
-}
-
-.user-main-image img {
-    width: 100%;
-    height: 100%;
 }
 
 .user-main-name p {
@@ -280,6 +376,7 @@
 .navbar-image img {
     width: 100%;
     height: 100%;
+    border-radius: 50%;
 }
 
 .navbar-icon {
@@ -305,14 +402,15 @@
     color: #aaa;
 }
 
-.users-chat-container {
+
+/* .users-chat-container {
     width: 100%;
     height: calc(100vh - 60px);
-}
+} */
 
 .user-chat-container {
     width: 100%;
-    height: 100%;
+    height: calc(100vh - 60px);
 }
 
 .user-chat-main-container {
@@ -352,13 +450,25 @@
 }
 
 .chat-bottom-image {
-    width: 20px;
-    height: 20px;
+    width: 27px;
+    height: 27px;
     margin-top: 15px;
     margin-left: 10px;
 }
 
 .chat-bottom-image img {
+    width: 100%;
+    height: 100%;
+}
+
+.chat-bottom-image-smile {
+    width: 25px;
+    height: 25px;
+    margin-top: 7px;
+    margin-left: 15px;
+}
+
+.chat-bottom-image-smile img {
     width: 100%;
     height: 100%;
 }
@@ -376,9 +486,9 @@
 
 .chat-bottom-send {
     width: 95%;
-    height: 50px;
+    height: 40px;
     margin: auto;
-    margin-top: 5px;
+    margin-top: 10px;
     border-radius: 30px;
     background-color: #eee;
 }
@@ -398,10 +508,11 @@
 .chat-bottom-input input[type=text] {
     width: 95%;
     font-size: 17px;
-    margin-top: 10px;
+    margin-top: 12px;
     margin-left: 10px;
     border: none;
     background-color: #eee;
+    outline: none;
 }
 
 .user-profile-detail {
@@ -420,6 +531,7 @@
 .user-profile-image img {
     width: 100%;
     height: 100%;
+    border-radius: 50%;
 }
 
 .user-profile-name p {
@@ -436,7 +548,7 @@
 }
 
 .chat-right {
-    width: 50%;
+    width: 100%;
     padding: 5px;
     float: right;
 }
@@ -472,7 +584,7 @@
 }
 
 .chat-left {
-    width: 50%;
+    width: 100%;
     padding: 5px;
     float: left;
 }
