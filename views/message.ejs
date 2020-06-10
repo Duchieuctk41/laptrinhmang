@@ -16,7 +16,7 @@
 </head>
 
 <body>
-    <div id="loginForm">
+    <!-- <div id="loginForm">
         <div class="content-login-form">
             <h1>what is your name?</h1>
             <div class="txt_field">
@@ -29,7 +29,8 @@
             </div>
 
         </div>
-    </div>
+    </div> -->
+
     <div class="container" id="chatForm">
 
         <div class="main-container users">
@@ -41,7 +42,14 @@
                 </div>
 
                 <div class="profile-user heading">
-                    <p><b>Chat</b></p>
+                    <p id="myUser"><b><%=user %></b></p>
+                </div>
+                <div class="profile-user people">
+                    <div class="profile-user-people">
+                        <div class="profile-setting-image">
+                            <h3 id="peoples">5</h3>
+                        </div>
+                    </div>
                 </div>
                 <div class="profile-user setting">
                     <div class="profile-user-setting">
@@ -118,8 +126,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="user-main-container" id="listUser">
-                    <div class="user-main-container-inside">
+                <ul class="user-main-container" id="listUser">
+                    <li class="user-main-container-inside" id="A-All">
                         <div class="user-main-inside photo">
                             <div class="user-main-image">
                                 <img src="./images/users.jpg">
@@ -131,15 +139,15 @@
                             </div>
                             <div class="user-main-message">
                                 <div class="user-last-message message">
-                                    <p>Last seen message</p>
+                                    <p id="last-mes-all">Last seen message</p>
                                 </div>
                                 <div class="user-last-message date">
                                     <p>Date</p>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </li>
+                </ul>
             </div>
         </div>
 
@@ -152,7 +160,7 @@
                 </div>
                 <div class="main-navbar-inside name">
                     <div class="navbar-name">
-                        <p><b>ChatAll</b></p>
+                        <p><b id="userVictim">All</b></p>
                     </div>
                     <div class="navbar-time">
                         <p>Time</p>
@@ -226,8 +234,8 @@
                         </div>
                         <div class="chat-bottom-icon send">
                             <div class="chat-bottom-send">
-                                <div class="chat-bottom-input text">
-                                    <input type="text" name="Send" placeholder="Type a message.." id="send">
+                                <div class="chat-bottom-input text" id="input-send-chat">
+                                    <input type="text" name="Send" placeholder="Type a message.." id="send-all">
                                 </div>
                                 <div class="chat-bottom-input smile">
                                     <div class="chat-bottom-image-smile">
@@ -313,6 +321,8 @@
             </div>
         </div>
     </div>
+    <script>
+    </script>
 </body>
 
 </html>

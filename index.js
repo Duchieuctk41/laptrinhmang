@@ -8,37 +8,39 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const session = require('express-session');
 var cookieParser = require('cookie-parser');
+var logger = require('morgan')
 const path = require('path');
+var flash = require("connect-flash");
 const port = 3000;
-app.use(express.static('./public'));
-
-
-
+let account = require('./models/Accounts')
+    //Set Template Engine
 app.set('view engine', 'ejs');
 app.set('views', './views');
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+///
+//
+app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+//
+//Set Passport
 app.use(session({
     secret: "mysecret",
     cookie: { maxAge: 1000 * 60 * 5000 },
-    //Save session to database 
-    // store: new (require('express-sessions'))({
-    //     storage: 'mongodb',
-    //     instance: mongoose, // optional
-    //     host: 'localhost', // optional
-    //     port: 27017, // optional
-    //     db: 'DiemDanhDB', // optional
-    //     collection: 'sessions', // optional
-    //     expire: 86400 // optional
-    // }),
     resave: true,
     saveUninitialized: true,
     unset: 'destroy',
 }));
+
+//Use authencation
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(direction);
 require('./configs/passport')(passport);
 server.listen(port, function() {
     console.log('Server listening on port ' + port);
@@ -63,29 +65,29 @@ mongoose.connect(mongoUri, connectOptions)
     );
 
 
-var arrayUsers = ['Chat All'];
-io.on("connection", function(socket) {
+var i = 0;
+io.on("connection", function (socket) {
     console.log("co nguoi vua ket noi, socket id: " + socket.id);
+    i++;
+    console.log("co " + i + " nguoi da ket noi");
+    socket.emit("server-send-people", i);
     socket.on("disconnect", function() {
+        i--;
         console.log(socket.id + "da ngat ket noi");
+        console.log("co " + i + " nguoi da ket noi");
+        socket.emit("server-send-people-leave", i);
     });
-    socket.on("Client-send-UserName", function(data) {
-        console.log(data);
-        if (arrayUsers.indexOf(data) >= 0) {
-            socket.emit("Server-send-Register-false");
-        } else {
-            arrayUsers.push(data);
-            socket.Username = data;
-            socket.emit("Server-send-Register-true", data);
-            io.sockets.emit("Server-send-arrayUsers", arrayUsers)
-        }
-    });
-    socket.on("user-send-Messages", function(data) {
-        io.sockets.emit("server-send-Messages", { un: socket.Username, nd: data });
-        socket.emit("server-send-Messages-yourself", { un: socket.Username, nd: data });
-        socket.broadcast.emit("server-send-Messages-friends", { un: socket.Username, nd: data });
-    });
+    socket.on("user-send-username", function() {
+            account.find({}, (err, result) => {
+              result.forEach(Element => {
+               
+                    var data = Element.TaiKhoan;
+                    socket.emit("Server-send-username", data);
+                })
 
+            })
+        })
+/*tao room moi*/
     socket.on("user-send-create-room", function(data) {
         socket.join(data);
         socket.Phong = data;
@@ -95,12 +97,37 @@ io.on("connection", function(socket) {
                 arrayRoom.push(r);
         }
         io.sockets.emit("server-send-list-room", arrayRoom);
-        socket.emit("server-send-room-socket", data);
     });
+  /* su kien join room*/
+  socket.on("user-send-join-room", function (data) {
+    socket.join(data);
+  });
+  socket.on("user-send-join-person", function (data) {
+    socket.join(data);
+  });
+  socket.on("user-send-join-person", function (data) {
+    socket.join(data);
+  });
+
+  /* nhan du lieu input tu client*/
+    socket.on("user-send-Messages-room", function(data) {
+      io.sockets.in(data.rm).emit("server-send-chat-room-room", data);
+      socket.emit("server-send-Messages-yourself", data);
+      socket.broadcast.in(data.rm).emit("server-send-room-friends", data);
+    });
+  
+  socket.on("user-send-Messages-person", function (data) {
+    io.sockets.in(data.rm).emit("server-send-chat-room-room", data);
+    socket.emit("server-send-Messages-yourself", data);
+    // io.sockets.in(data.my).emit("server-send-chat-person", data);
+    socket.broadcast.emit("server-send-chat-person", data);
+    socket.broadcast.in(data.my).emit("server-send-Messages-person", data);
+    // socket.broadcast.emit("server-send-Messages-person", data);
+  })
+  socket.on("user-send-Messages-all", function (data) {
+    io.sockets.emit("server-send-Messages-all", data);
+    socket.emit("server-send-Messages-yourself", data);
+    socket.broadcast.emit("server-send-Messages-friends", data);
+  });
 
 });
-
-
-
-
-app.use(direction);

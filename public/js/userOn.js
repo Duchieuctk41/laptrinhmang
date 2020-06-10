@@ -1,39 +1,64 @@
 var socket = io("http://localhost:3000");
 
-socket.on("Server-send-Register-false", function() {
-    alert('Ten dang ky da ton tai');
-});
-socket.on("Server-send-arrayUsers", function(data) {
+socket.on("Server-send-username", function(data) {
 
-    $('#listUser').html('')
-    data.forEach(element => {
-        $('#listUser').append('<div class="user-main-container-inside"><div class="user-main-inside photo"><div class="user-main-image"><img src="./images/users.jpg"></div></div><div class="user-main-inside text"><div class="user-main-name"><p>' + element + '</p></div><div class="user-main-message"><div class="user-last-message message"><p id="lastMessage">Last seen message</p></div><div class="user-last-message date"><p>Date</p></div></div></div></div>');
-    });
+    $('#listUser').append('<li class="user-main-container-inside" id="P-' + data + '"><div class="user-main-inside photo"><div class="user-main-image"><img src="./images/users.jpg"></div></div><div class="user-main-inside text"><div class="user-main-name"><p>' + data + '</p></div><div class="user-main-message"><div class="user-last-message message"><p id="last-mes-'+data+'">Last seen message</p></div><div class="user-last-message date"><p>Date</p></div></div></div></li>');
 
-});
-socket.on("Server-send-Register-true", function(data) {
-    $('#user-profile-name').html('<p><b>' + data + '</b></p>');
-    $('#loginForm').hide(2000);
-    $('#chatForm').show(1000);
-
-});
-
-
-socket.on("server-send-Messages", function(data) {
-    $('#lastMessage').html(data.un + ' : ' + data.nd);
+})
+/* dem so nguoi dang online*/
+socket.on("server-send-people", function(i) {
+    $('#peoples').html(i);
+})
+socket.on("server-send-people-leave", function(i) {
+    $('#peoples').html(i);
+})
+/* bat su kien chat all*/
+socket.on("server-send-Messages-all", function (data) {
+  $('#last-mes-all').html(data.un);
 });
 socket.on("server-send-Messages-yourself", function(data) {
-    $('#chat-container').append('<div class="chat-right"><div class="chat-right-page image"><div class="chat-display-image"><img src="./images/check.jfif"></div></div><div class="chat-right-page name"><div class="chat-display-name"><p>' + data.nd + '</p></div></div></div>');
+    $('#chat-container').append('<div class="chat-right"><div class="chat-right-page image"><div class="chat-display-image"><img src="./images/check.jfif"></div></div><div class="chat-right-page name"><div class="chat-display-name"><p>' + data.un + '</p></div></div></div>');
 });
 
 socket.on("server-send-Messages-friends", function(data) {
-    $('#chat-container').append('<div class="chat-left"><div class="chat-left-page image"><div class="chat-left-display-image"> <img src="./images/users.jpg"> </div> </div> <div class="chat-left-page name"><div class="chat-left-display-name"><p>' + data.un + ' : ' + data.nd + '</p></div></div></div>');
+    $('#chat-container').append('<div class="chat-left"><div class="chat-left-page image"><div class="chat-left-display-image"> <img src="./images/users.jpg"> </div> </div> <div class="chat-left-page name"><div class="chat-left-display-name"><p>' +  data.un + '</p></div></div></div>');
+});
+socket.on("server-send-chat-person", function (data) {
+  var newData = data.my;
+  $('#last-mes-' + newData.slice(2)).html(data.un);
+})
+socket.on("server-send-Messages-person", function (data) {
+  $('#chat-container').append('<div class="chat-left"><div class="chat-left-page image"><div class="chat-left-display-image"> <img src="./images/users.jpg"> </div> </div> <div class="chat-left-page name"><div class="chat-left-display-name"><p>' + data.un + '</p></div></div></div>');
+})
+/* su kien tao phong chat */
+socket.on("server-send-list-room", function(data) {
+  var items = $('ul.user-main-container>li');
+  var check = true;
+  $.each(items, function (index, node) {
+    var idRoom = 'N-' + data;
+    if (idRoom == (node.getAttribute('id')))
+      check = false;
+  })
+  if (check == true)
+  {
+    data.map(function (element) {
+      $('#listUser').append('<li class="user-main-container-inside" id="N-' + element + '"><div class="user-main-inside photo"><div class="user-main-image"><img src="./images/users.jpg"></div></div><div class="user-main-inside text"><div class="user-main-name"><p>' + element + '</p></div><div class="user-main-message"><div class="user-last-message message"><p id="last-mes-' + element +'">Last seen message</p></div><div class="user-last-message date"><p>Date</p></div></div></div></li>');
+    });
+  } else {
+    alert('Nhom ' + data + ' da ton tai');
+  }
+    
 });
 
-socket.on("server-send-list-room", function(data) {
-    $('#listRoom').html("");
-    data.map(function(element) {
-        $('#listUser').append('<div class="user-main-container-inside" id="newbie aa"><div class="user-main-inside photo"><div class="user-main-image"><img src="./images/users.jpg"></div></div><div class="user-main-inside text"><div class="user-main-name"><p>' + element + '</p></div><div class="user-main-message"><div class="user-last-message message"><p id="lastMessage">Last seen message</p></div><div class="user-last-message date"><p>Date</p></div></div></div></div>');
-        // $('#listRoom').append('<h4 class="room">' + r + '</h4>');
-    });
-});
+socket.on("server-send-chat-room-room", function (data) {
+  var newData = data.rm;
+  $('#last-mes-' + newData.slice(2)).html(data.un);
+  
+
+})
+socket.on("server-send-room-yourself", function (data) {
+  $('#chat-container').append('<div class="chat-right"><div class="chat-right-page image"><div class="chat-display-image"><img src="./images/check.jfif"></div></div><div class="chat-right-page name"><div class="chat-display-name"><p>' + data.un + '</p></div></div></div>');
+})
+socket.on("server-send-room-friends", function (data) {
+  $('#chat-container').append('<div class="chat-left"><div class="chat-left-page image"><div class="chat-left-display-image"> <img src="./images/users.jpg"> </div> </div> <div class="chat-left-page name"><div class="chat-left-display-name"><p>' + data.un + '</p></div></div></div>');
+})

@@ -22,31 +22,12 @@ module.exports = function(passports) {
             passReqToCallback: true
         },
         function(req, username, password, done) {
-            Account.findOne({ TaiKhoan: username }, function(err, user) {
+            Account.findOne({ TaiKhoan: username, MatKhau: password }, function(err, user) {
 
                 if (err) return done(null, false, req.flash('error', 'Vui lòng kiêm tra lại thông tin tài khoản.'));
                 if (user == null) return done(null, false, req.flash('error', 'Tài khoản không tồn tại.'));
 
-
                 return done(null, user);
-            })
-        }
-
-
-    ))
-    passport.use('local-teacherLogin', new LocalStrategy({
-            usernameField: 'uname',
-            passwordField: 'psw',
-            passReqToCallback: true
-        },
-        function(req, uname, psw, done) {
-            process.nextTick(function() {
-                Account.findOne({ IDTaiKhoan: uname }, function(err, user) {
-                    if (err) return done(null, false, req.flash('error', 'Vui lòng kiêm tra lại thông tin tài khoản.'));
-                    if (user == null) return done(null, false, req.flash('error', 'Tài khoản không tồn tại.'));
-                    if (user.PassWord != psw || user.LoaiTaiKhoan != "Giao Vien") return done(null, false, req.flash('error', 'Mật khẩu không đúng'));
-                    return done(null, user);
-                })
             })
         }
 

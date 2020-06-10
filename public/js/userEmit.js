@@ -1,28 +1,64 @@
 $(document).ready(function() {
-    $('#loginForm').show();
-    $('#chatForm').hide();
-
+    socket.emit("user-send-username");
+  
     $('#btnRegister').click(function() {
         socket.emit("Client-send-UserName", $("#txtUserName").val());
     });
     $('#send').bind("enterKey", function(e) {
         //do stuff here
     });
-    $('#send').keypress(function(e) {
-        if (e.keyCode == 13) {
-            $(this).trigger("enterKey");
-            socket.emit("user-send-Messages", $('#send').val());
-            $('#send').val('');
-        }
-    });
 
+
+/* su kien tao room chat */
     $('#btnCreateRoom').click(function() {
         socket.emit("user-send-create-room", $('#txtCreateRoom').val());
     });
-    $(document).on('click', '#newbie aa', function() {
-        alert('fdkl');
-        $('.navbar-name').html('<p><b>ádfgh</b></p>');
-
-
+  var currentRoom = '';
+  var person = /^P/;
+  var room = /^N/;
+  
+  /* su kien click join room chat*/
+  $(document).on("click", "#listUser li", function (event) {
+    currentRoom = this.id;
+    if (person.test(currentRoom)) {
+      socket.emit("user-send-join-person", currentRoom);
+      $('#userVictim').html(currentRoom.slice(2));
+      $('#chat-container').html('');
+      $('#input-send-chat').html('<input type="text" name="Send" placeholder="Type a message.." id="send-person">')
+    }
+    else if (room.test(currentRoom)) {
+      socket.emit("user-send-join-room", currentRoom);
+      $('#userVictim').html(currentRoom.slice(2));
+      $('#chat-container').html('');
+      $('#input-send-chat').html('<input type="text" name="Send" placeholder="Type a message.." id="send-room">')
+    } else {
+      socket.emit("user-send-join-all", currentRoom);
+      $('#userVictim').html(currentRoom.slice(2));
+      $('#chat-container').html('');
+      $('#input-send-chat').html('<input type="text" name="Send" placeholder="Type a message.." id="send-all">')
+    }
+   
     });
+/*su kien chat input*/
+  $(document).on("change", '#send-room', function () {
+    var nd = $("#myUser").text() + " : " + $(this).val();
+    socket.emit("user-send-Messages-room", { rm: currentRoom, un: nd });
+    $(this).val('');
+  });
+
+
+  $(document).on("change", '#send-all', function () {
+    var nd = $("#myUser").text() + " : " + $(this).val();
+    socket.emit("user-send-Messages-all", { rm: currentRoom, un: nd });
+    $(this).val('');
+  });
+
+  $(document).on("change", '#send-person', function () {
+    var nd = $("#myUser").text() + " : " + $(this).val();
+    var myId = 'P-' + $("#myUser").text();
+    socket.emit("user-send-Messages-person", {my:myId, rm: currentRoom, un: nd });
+    $(this).val('');
+  });
+
+
 });

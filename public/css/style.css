@@ -143,12 +143,26 @@
     padding-left: 20px;
 }
 
+.profile-user.people {
+    width: 20%;
+}
+
 .profile-user.setting {
     width: 20%;
 }
 
 .profile-user.edit {
     width: 20%;
+}
+
+.profile-user-people {
+    margin-top: 12px;
+    width: 35px;
+    height: 35px;
+    margin-left: 50px;
+    border-radius: 50%;
+    background-color: yellow;
+    overflow: hidden;
 }
 
 .profile-user-image {
@@ -170,7 +184,7 @@
     margin-top: 12px;
     width: 35px;
     height: 35px;
-    margin-left: 80px;
+    margin-left: 30px;
     border-radius: 50%;
     background-color: #eee;
     overflow: hidden;
@@ -188,11 +202,17 @@
     height: 100%;
 }
 
+.profile-setting-image h3 {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
 .profile-user-edit {
     margin-top: 12px;
     width: 35px;
     height: 35px;
-    margin-left: 60px;
+    margin-left: 10px;
     border-radius: 50%;
     background-color: #eee;
     overflow: hidden;
@@ -273,6 +293,8 @@
     width: 100%;
     margin-top: 10px;
     height: 100%;
+    overflow: auto;
+    white-space: nowrap;
 }
 
 .user-main-container-inside {

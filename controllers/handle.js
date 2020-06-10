@@ -1,23 +1,28 @@
 let account = require('../models/Accounts');
 const passport = require('passport');
+var arrayUsers = ['Chat All'];
+
 module.exports.getIndex = async(req, res, next) => {
-    return res.render('./login');
+    if (req.isAuthenticated('local-Login')) {
+        return res.redirect('/message');
+    } else {
+        return res.render('./login');
+    }
+
 }
-module.exports.checkLogin = passport.authenticate('local-Login', {
-    successRedirect: '/login',
+module.exports.postLogin = passport.authenticate('local-Login', {
+    successRedirect: '/message',
     failureRedirect: '/',
     failureFlash: true
 });
-module.exports.postLogin = async(req, res) => {
-    var name = req.body.name;
-    var pass = req.body.pass;
-    account.findOne({ TaiKhoan: name, MatKhau: pass }, (err, result) => {
-        if (result) {
-            res.render('./message');
-        } else {
-
-            res.render('./login');
-
-        }
-    })
+module.exports.getLogin = function(req, res) {
+    if (req.isAuthenticated('local-Login')) {
+        return res.render('./message', {
+            user: req.user.TaiKhoan
+        });
+    }
+}
+module.exports.isLogined_next = async function(req, res, next) {
+    if (req.isAuthenticated('local-Login')) return next();
+    return res.redirect('/');
 }
