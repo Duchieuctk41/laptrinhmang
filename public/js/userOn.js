@@ -1,9 +1,13 @@
 var socket = io("http://localhost:3000");
 
+
 socket.on("Server-send-username", function(data) {
 
-    $('#listUser').append('<li class="user-main-container-inside" id="P-' + data + '"><div class="user-main-inside photo"><div class="user-main-image"><img src="./images/users.jpg"></div></div><div class="user-main-inside text"><div class="user-main-name"><p>' + data + '</p></div><div class="user-main-message"><div class="user-last-message message"><p id="last-mes-'+data+'">Last seen message</p></div><div class="user-last-message date"><p>Date</p></div></div></div></li>');
-
+  $('#listUser').append('<li class="user-main-container-inside" id="P-' + data + '"><div class="user-main-inside photo"><div class="user-main-image"><img src="./images/users.jpg"></div></div><div class="user-main-inside text"><div class="user-main-name"><p>' + data + '</p></div><div class="user-main-message"><div class="user-last-message message"><p id="last-mes-' + data.P + '">Last seen message</p></div><div class="user-last-message date"><p>Date</p></div></div></div></li>');
+  // $('#listUser').append('<li class="user-main-container-inside" id="N-' + data + '"><div class="user-main-inside photo"><div class="user-main-image"><img src="./images/users.jpg"></div></div><div class="user-main-inside text"><div class="user-main-name"><p>' + data + '</p></div><div class="user-main-message"><div class="user-last-message message"><p id="last-mes-' + data.N + '">Last seen message</p></div><div class="user-last-message date"><p>Date</p></div></div></div></li>');
+})
+socket.on("Server-send-room", function (data) {
+  $('#listUser').append('<li class="user-main-container-inside" id="N-' + data + '"><div class="user-main-inside photo"><div class="user-main-image"><img src="./images/users.jpg"></div></div><div class="user-main-inside text"><div class="user-main-name"><p>' + data + '</p></div><div class="user-main-message"><div class="user-last-message message"><p id="last-mes-' + data + '">Last seen message</p></div><div class="user-last-message date"><p>Date</p></div></div></div></li>');
 })
 /* dem so nguoi dang online*/
 socket.on("server-send-people", function(i) {
@@ -61,4 +65,11 @@ socket.on("server-send-room-yourself", function (data) {
 })
 socket.on("server-send-room-friends", function (data) {
   $('#chat-container').append('<div class="chat-left"><div class="chat-left-page image"><div class="chat-left-display-image"> <img src="./images/users.jpg"> </div> </div> <div class="chat-left-page name"><div class="chat-left-display-name"><p>' + data.un + '</p></div></div></div>');
+})
+
+socket.on("server-send-user-joined-room", function (data) {
+  $('#user-profile-name').html('');
+  data.map(function (element) {
+    $('#user-profile-name').append(element + ' ');
+  });
 })
