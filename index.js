@@ -43,6 +43,7 @@ app.use(flash());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 app.use(direction);
 require('./configs/passport')(passport);
 server.listen(port, function () {
@@ -68,8 +69,9 @@ mongoose.connect(mongoUri, connectOptions)
   );
 
 
+
 var i = 0;
-io.on("connection", function (socket) {
+io.on("connection", function (socket, req) {
   console.log("co nguoi vua ket noi, socket id: " + socket.id);
   i++;
   console.log("co " + i + " nguoi da ket noi");
@@ -88,28 +90,28 @@ io.on("connection", function (socket) {
 
         socket.emit("Server-send-username", data.P);
       })
-
     })
   });
-
 
   socket.on("user-send-room", function () {
     room.find({}, (err, result) => {
       var data = {}
       result.forEach(Element => {
-        data = { N: Element.TenNhom}
+        data = { N: Element.TenNhom }
         socket.emit("Server-send-room", data.N);
       })
     });
   });
-
-
   /*tao room moi*/
   socket.on("user-send-create-room", function (data) {
     socket.join(data);
     room.insertMany({ TenNhom: data }, (err, resslut) => {
+      // console.log(resslut);
+    });
+    conversation.insertMany({ TenNhom: data }, (err, resslut) => {
       console.log(resslut);
     });
+    
     socket.Phong = data;
     var arrayRoom = [];
     for (r in socket.adapter.rooms) {
@@ -118,38 +120,31 @@ io.on("connection", function (socket) {
     }
     io.sockets.emit("server-send-list-room", arrayRoom);
   });
-  /* su kien join room*/
 
+  /* su kien join room*/
   socket.on("user-send-join-room", function (data) {
     socket.join(data.crRoom);
+    io.sockets.in(data.rm).emit("server-send-history-chat", data);
     var crR = data.crRoom.slice(2);
     room.updateMany({ TenNhom: crR }, { $addToSet: { Name: data.userJoin } }, (err, result) => {
-        console.log(result);
-      });;
-
- room.find({}, (err, result) => {
-        var data = {};
-        result.forEach(Element => {
-          if (Element.TenNhom == crR)
-            data = { N: Element.Name }
-          io.sockets.emit("server-send-user-joined-room", data.N);
-        })
-      });
-
-
-     
     });
-     
-     
     
-
-  socket.on("user-send-join-person", function (data) {
-    socket.join(data);
+    
+    room.find({}, (err, result) => {
+      var data = {};
+      result.forEach(Element => {
+        if (Element.TenNhom == crR)
+          data = { N: Element.Name }
+        io.sockets.emit("server-send-user-joined-room", data.N);
+      })
+    });
   });
   socket.on("user-send-join-person", function (data) {
     socket.join(data);
   });
-
+  socket.on("user-send-join-person", function (data) {
+    socket.join(data);
+  });
   /* nhan du lieu input tu client*/
   socket.on("user-send-Messages-room", function (data) {
     io.sockets.in(data.rm).emit("server-send-chat-room-room", data);
@@ -157,14 +152,11 @@ io.on("connection", function (socket) {
     socket.broadcast.in(data.rm).emit("server-send-room-friends", data);
   });
   socket.on("user-send-conversation-room", function (data) {
-
     var crR = data.rm.slice(2);
-    // conversation.updateMany({ TenNhom: crR }, { $push:  dialogue: {data.nm} }, (err, result) => {
-    //   console.log(result);
-    // });;
-    
-  })
-
+    conversation.updateMany({ TenNhom: crR }, { $push: { namePerson: data.nm, dialogue: data.ct } }, (err, result) => {
+      console.log('them tin nhan thanh cong');
+    });
+  });
   socket.on("user-send-Messages-person", function (data) {
     io.sockets.in(data.rm).emit("server-send-chat-room-room", data);
     socket.emit("server-send-Messages-yourself", data);
@@ -172,11 +164,11 @@ io.on("connection", function (socket) {
     socket.broadcast.emit("server-send-chat-person", data);
     socket.broadcast.in(data.my).emit("server-send-Messages-person", data);
     // socket.broadcast.emit("server-send-Messages-person", data);
-  })
+  });
+
   socket.on("user-send-Messages-all", function (data) {
     io.sockets.emit("server-send-Messages-all", data);
     socket.emit("server-send-Messages-yourself", data);
     socket.broadcast.emit("server-send-Messages-friends", data);
   });
-
 });

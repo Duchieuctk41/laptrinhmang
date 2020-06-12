@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 
 var conversationSchema = new mongoose.Schema({
   TenNhom: String,
+  namePerson: Array,
   dialogue: Array
 });
 

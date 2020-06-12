@@ -29,7 +29,6 @@ $(document).ready(function () {
     }
     else if (room.test(currentRoom)) {
       var nd = $("#myUser").text();
-      socket.emit("user-send-user-join-room", nd);
       socket.emit("user-send-join-room", {crRoom: currentRoom, userJoin:nd });
       $('#userVictim').html(currentRoom.slice(2));
       $('#chat-container').html('');
@@ -66,6 +65,8 @@ $(document).ready(function () {
     socket.emit("user-send-Messages-person", { my: myId, rm: currentRoom, un: nd });
     $(this).val('');
   });
+  $(document).on("click", "#logOut", function (event) {
 
-
+  });
+   
 });
