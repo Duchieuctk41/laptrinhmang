@@ -170,22 +170,25 @@ io.on("connection", function (socket, req) {
     // socket.join(crR2);
     //kiem tra database da ton tai chua, co bi trung ko
     privateMessage.find({ TenNhom: crR2 }, (err, result) => {
-      if (result.length == 0) {
-        privateMessage.find({ TenNhom: crR }, (error, res) => {
-          if (res.length == 0) {
-            socket.join(crR);
-            privateMessage.insertMany({ TenNhom: crR }, (err, result) => {
-          console.log('them thanh cong 1 doi tuong: ' + result);
-        })
-          }
-        })
-      } else {
-        console.log('database nhom chat da ton tai: ' + result);
-      socket.join(crR2);
-        io.sockets.in(crR2).emit("server-send-history-chat-private", result);
+      
+      privateMessage.find({ TenNhom: crR }, (error, res) => {
+        if (result.length == 0 && res.length == 0) {
+          socket.join(crR);
+          console.log('1')
+          privateMessage.insertMany({ TenNhom: crR }, (err, result) => {
+            console.log('them thanh cong 1 doi tuong: ' + result);
+          })
+        } else if (res.length == 0) {
+          socket.join(crR);
+          console.log('2')
+          io.sockets.in(crR).emit("server-send-history-chat-private", result);
 
-      } 
-   
+        } else {
+          socket.join(crR2);
+          console.log('3', res);
+          io.sockets.in(crR2).emit("server-send-history-chat-private", res);
+        }
+      });
     });
 
   });
