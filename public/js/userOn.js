@@ -59,7 +59,29 @@ socket.on("server-send-chat-room-room", function (data) {
   $('#last-mes-' + newData.slice(2)).html(data.un);
   
 
+});
+// xuat ra lich su chat nhom
+socket.on("server-send-history-chat-room", function (data) {
+  for (i in data.namePerson) {
+    if (data.namePerson[i] == $('#myUser').text())
+    {
+      $('#chat-container').append('<div class="chat-right"><div class="chat-right-page image"><div class="chat-display-image"><img src="./images/check.jfif"></div></div><div class="chat-right-page name"><div class="chat-display-name"><p>' + data.namePerson[i]+' : '+data.dialogue[i] + '</p></div></div></div>');
+    } else {
+      $('#chat-container').append('<div class="chat-left"><div class="chat-left-page image"><div class="chat-left-display-image"> <img src="./images/users.jpg"> </div> </div> <div class="chat-left-page name"><div class="chat-left-display-name"><p>' + data.namePerson[i] + ' : ' + data.dialogue[i] + '</p></div></div></div>');
+      }
+  }
 })
+socket.on("server-send-history-chat-all", function (data) {
+
+  for (i in data.namePerson) {
+    if (data.namePerson[i] == $('#myUser').text()) {
+      $('#chat-container').append('<div class="chat-right"><div class="chat-right-page image"><div class="chat-display-image"><img src="./images/check.jfif"></div></div><div class="chat-right-page name"><div class="chat-display-name"><p>' + data.namePerson[i] + ' : ' + data.dialogue[i] + '</p></div></div></div>');
+    } else {
+      $('#chat-container').append('<div class="chat-left"><div class="chat-left-page image"><div class="chat-left-display-image"> <img src="./images/users.jpg"> </div> </div> <div class="chat-left-page name"><div class="chat-left-display-name"><p>' + data.namePerson[i] + ' : ' + data.dialogue[i] + '</p></div></div></div>');
+    }
+  }
+});
+
 socket.on("server-send-room-yourself", function (data) {
   $('#chat-container').append('<div class="chat-right"><div class="chat-right-page image"><div class="chat-display-image"><img src="./images/check.jfif"></div></div><div class="chat-right-page name"><div class="chat-display-name"><p>' + data.un + '</p></div></div></div>');
 })

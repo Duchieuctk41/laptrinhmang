@@ -16,6 +16,7 @@ let account = require('./models/Accounts');
 let room = require('./models/Room');
 let conversation = require('./models/Conversation');
 const { fchown } = require('fs');
+const { all } = require('./routes/direction.router');
 //Set Template Engine
 app.set('view engine', 'ejs');
 app.set('views', './views');
@@ -87,7 +88,6 @@ io.on("connection", function (socket, req) {
     account.find({}, (err, result) => {
       result.forEach(Element => {
         data = { P: Element.TaiKhoan };
-
         socket.emit("Server-send-username", data.P);
       })
     })
@@ -102,6 +102,13 @@ io.on("connection", function (socket, req) {
       })
     });
   });
+
+  socket.on("user-request-history-chat-all", function (data) {
+
+    conversation.findOne({ TenNhom: 'All' }, (err, result) => {
+      io.sockets.emit("server-send-history-chat-all", result);
+    })
+  });
   /*tao room moi*/
   socket.on("user-send-create-room", function (data) {
     socket.join(data);
@@ -109,9 +116,9 @@ io.on("connection", function (socket, req) {
       // console.log(resslut);
     });
     conversation.insertMany({ TenNhom: data }, (err, resslut) => {
-      console.log(resslut);
+      // console.log(resslut);
     });
-    
+    // tao mang tam luu phong moi nhap
     socket.Phong = data;
     var arrayRoom = [];
     for (r in socket.adapter.rooms) {
@@ -124,12 +131,14 @@ io.on("connection", function (socket, req) {
   /* su kien join room*/
   socket.on("user-send-join-room", function (data) {
     socket.join(data.crRoom);
-    io.sockets.in(data.rm).emit("server-send-history-chat", data);
     var crR = data.crRoom.slice(2);
+    //update database room va conversation
     room.updateMany({ TenNhom: crR }, { $addToSet: { Name: data.userJoin } }, (err, result) => {
     });
-    
-    
+    conversation.findOne({ TenNhom: crR }, (err, result) => {
+      io.sockets.in(data.crRoom).emit("server-send-history-chat-room", result);
+        console.log(result);
+    })
     room.find({}, (err, result) => {
       var data = {};
       result.forEach(Element => {
@@ -139,8 +148,11 @@ io.on("connection", function (socket, req) {
       })
     });
   });
-  socket.on("user-send-join-person", function (data) {
-    socket.join(data);
+  socket.on("user-send-join-all", function (data) {
+ 
+    conversation.findOne({ TenNhom: 'All' }, (err, result) => {
+      io.sockets.emit("server-send-history-chat-all", result);
+    })
   });
   socket.on("user-send-join-person", function (data) {
     socket.join(data);
@@ -151,12 +163,24 @@ io.on("connection", function (socket, req) {
     socket.emit("server-send-Messages-yourself", data);
     socket.broadcast.in(data.rm).emit("server-send-room-friends", data);
   });
+  /*them tin nhan moi vao database*/
   socket.on("user-send-conversation-room", function (data) {
+    console.log(data);
     var crR = data.rm.slice(2);
     conversation.updateMany({ TenNhom: crR }, { $push: { namePerson: data.nm, dialogue: data.ct } }, (err, result) => {
-      console.log('them tin nhan thanh cong');
+      console.log('them tin nhom thanh cong');
     });
   });
+
+  socket.on("user-send-conversation-all", function (data) {
+    var crR = data.rm.slice(2);
+    console.log(data)
+    conversation.updateMany({ TenNhom: crR }, { $push: { namePerson: data.nm, dialogue: data.ct } }, (err, result) => {
+      console.log('them tin all thanh cong');
+    });
+  });
+
+
   socket.on("user-send-Messages-person", function (data) {
     io.sockets.in(data.rm).emit("server-send-chat-room-room", data);
     socket.emit("server-send-Messages-yourself", data);

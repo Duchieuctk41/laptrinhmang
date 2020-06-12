@@ -1,6 +1,7 @@
 $(document).ready(function () {
   socket.emit("user-send-username");
   socket.emit("user-send-room");
+  socket.emit("user-request-history-chat-all");
 
   $('#btnRegister').click(function () {
     socket.emit("Client-send-UserName", $("#txtUserName").val());
@@ -14,7 +15,7 @@ $(document).ready(function () {
   $('#btnCreateRoom').click(function () {
     socket.emit("user-send-create-room", $('#txtCreateRoom').val());
   });
-  var currentRoom = '';
+  var currentRoom = 'A-All';
   var person = /^P/;
   var room = /^N/;
 
@@ -29,13 +30,13 @@ $(document).ready(function () {
     }
     else if (room.test(currentRoom)) {
       var nd = $("#myUser").text();
-      socket.emit("user-send-join-room", {crRoom: currentRoom, userJoin:nd });
+      socket.emit("user-send-join-room", {crRoom: currentRoom, userJoin:nd});
       $('#userVictim').html(currentRoom.slice(2));
       $('#chat-container').html('');
       $('#input-send-chat').html('<input type="text" name="Send" placeholder="Type a message.." id="send-room">');
 
     } else {
-      socket.emit("user-send-join-all", currentRoom);
+      socket.emit("user-send-join-all", {userJoin: nd });
       $('#userVictim').html(currentRoom.slice(2));
       $('#chat-container').html('');
       $('#input-send-chat').html('<input type="text" name="Send" placeholder="Type a message.." id="send-all">');
@@ -55,6 +56,9 @@ $(document).ready(function () {
 
   $(document).on("change", '#send-all', function () {
     var nd = $("#myUser").text() + " : " + $(this).val();
+    var name = $("#myUser").text();
+    var content = $(this).val();
+    socket.emit("user-send-conversation-all", { rm: currentRoom, nm: name, ct: content });
     socket.emit("user-send-Messages-all", { rm: currentRoom, un: nd });
     $(this).val('');
   });
