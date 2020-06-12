@@ -11,6 +11,7 @@ module.exports.getIndex = async (req, res, next) => {
     return res.render('./login');
   }
 }
+
 module.exports.postLogin = passport.authenticate('local-Login', {
   successRedirect: '/message',
   failureRedirect: '/',
@@ -20,10 +21,8 @@ module.exports.postLogin = passport.authenticate('local-Login', {
 module.exports.getLogin = function (req, res) {
   if (req.isAuthenticated('local-Login')) {
     account.updateMany({ TaiKhoan: req.user.TaiKhoan }, { $set: { Status: true } }, (err, result) => {
-      io.sockets.emit("server-update-people-online", result);
       console.log(req.user.TaiKhoan + ' vua online');
     });
-    console.log(req.user.Status);
     return res.render('./message', {
       user: req.user.TaiKhoan
     });
@@ -34,6 +33,7 @@ module.exports.isLogined_next = async function (req, res, next) {
   if (req.isAuthenticated('local-Login')) return next();
   return res.redirect('/');
 }
+
 module.exports.Logout = async function (req, res) {
   
   account.updateMany({ TaiKhoan: req.user.TaiKhoan }, { $set: { Status: false } }, (err, result) => {

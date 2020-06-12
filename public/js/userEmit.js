@@ -23,7 +23,8 @@ $(document).ready(function () {
   $(document).on("click", "#listUser li", function (event) {
     currentRoom = this.id;
     if (person.test(currentRoom)) {
-      socket.emit("user-send-join-person", currentRoom);
+      var nd = $("#myUser").text();
+      socket.emit("user-send-join-person", {toPerson: currentRoom, myPerson: nd});
       $('#userVictim').html(currentRoom.slice(2));
       $('#chat-container').html('');
       $('#input-send-chat').html('<input type="text" name="Send" placeholder="Type a message.." id="send-person">')
@@ -66,6 +67,11 @@ $(document).ready(function () {
   $(document).on("change", '#send-person', function () {
     var nd = $("#myUser").text() + " : " + $(this).val();
     var myId = 'P-' + $("#myUser").text();
+    var name = $("#myUser").text();
+    var content = $(this).val();
+    var myPerson = $("#myUser").text();
+    var toPerson = $('#userVictim').text();
+    socket.emit("user-send-conversation-private", { rm: myPerson, tp: toPerson, nm: name, ct: content });
     socket.emit("user-send-Messages-person", { my: myId, rm: currentRoom, un: nd });
     $(this).val('');
   });

@@ -15,6 +15,7 @@ const port = 3000;
 let account = require('./models/Accounts');
 let room = require('./models/Room');
 let conversation = require('./models/Conversation');
+let privateMessage = require('./models/PrivateMessage');
 const { fchown } = require('fs');
 const { all } = require('./routes/direction.router');
 //Set Template Engine
@@ -114,7 +115,7 @@ io.on("connection", function (socket, req) {
   socket.on("user-request-history-chat-all", function (data) {
 
     conversation.findOne({ TenNhom: 'All' }, (err, result) => {
-      io.sockets.emit("server-send-history-chat-all", result);
+      socket.emit("server-send-history-chat-all", result);
     })
   });
   /*tao room moi*/
@@ -144,8 +145,8 @@ io.on("connection", function (socket, req) {
     room.updateMany({ TenNhom: crR }, { $addToSet: { Name: data.userJoin } }, (err, result) => {
     });
     conversation.findOne({ TenNhom: crR }, (err, result) => {
-      io.sockets.in(data.crRoom).emit("server-send-history-chat-room", result);
-        console.log(result);
+     socket.emit("server-send-history-chat-room", result);
+        // console.log(result);
     })
     room.find({}, (err, result) => {
       var data = {};
@@ -157,13 +158,36 @@ io.on("connection", function (socket, req) {
     });
   });
   socket.on("user-send-join-all", function (data) {
- 
     conversation.findOne({ TenNhom: 'All' }, (err, result) => {
       io.sockets.emit("server-send-history-chat-all", result);
     })
   });
   socket.on("user-send-join-person", function (data) {
-    socket.join(data);
+    var crR = data.toPerson.slice(2) + 'va' + data.myPerson;
+    var crR2 = data.myPerson + 'va' + data.toPerson.slice(2);
+    console.log(crR2);
+    
+    // socket.join(crR2);
+    //kiem tra database da ton tai chua, co bi trung ko
+    privateMessage.find({ TenNhom: crR2 }, (err, result) => {
+      if (result.length == 0) {
+        privateMessage.find({ TenNhom: crR }, (error, res) => {
+          if (res.length == 0) {
+            socket.join(crR);
+            privateMessage.insertMany({ TenNhom: crR }, (err, result) => {
+          console.log('them thanh cong 1 doi tuong: ' + result);
+        })
+          }
+        })
+      } else {
+        console.log('database nhom chat da ton tai: ' + result);
+      socket.join(crR2);
+        io.sockets.in(crR2).emit("server-send-history-chat-private", result);
+
+      } 
+   
+    });
+
   });
   /* nhan du lieu input tu client*/
   socket.on("user-send-Messages-room", function (data) {
@@ -171,9 +195,22 @@ io.on("connection", function (socket, req) {
     socket.emit("server-send-Messages-yourself", data);
     socket.broadcast.in(data.rm).emit("server-send-room-friends", data);
   });
-  /*them tin nhan moi vao database*/
+/*them tin nhan moi vao database*/
+  socket.on("user-send-conversation-private", function (data) {
+
+    var crR = data.rm + 'va' + data.tp;
+    var crR2 = data.tp + 'va' + data.rm;
+    privateMessage.updateMany({ TenNhom: crR }, { $push: { namePerson: data.nm, dialogue: data.ct } }, (err, result) => {
+      console.log(result);
+    });
+    privateMessage.updateMany({ TenNhom: crR2 }, { $push: { namePerson: data.nm, dialogue: data.ct } }, (err, result) => {
+      console.log(result);
+    });
+
+  });
+
   socket.on("user-send-conversation-room", function (data) {
-    console.log(data);
+    
     var crR = data.rm.slice(2);
     conversation.updateMany({ TenNhom: crR }, { $push: { namePerson: data.nm, dialogue: data.ct } }, (err, result) => {
       console.log('them tin nhom thanh cong');
@@ -182,7 +219,6 @@ io.on("connection", function (socket, req) {
 
   socket.on("user-send-conversation-all", function (data) {
     var crR = data.rm.slice(2);
-    console.log(data)
     conversation.updateMany({ TenNhom: crR }, { $push: { namePerson: data.nm, dialogue: data.ct } }, (err, result) => {
       console.log('them tin all thanh cong');
     });
@@ -190,12 +226,12 @@ io.on("connection", function (socket, req) {
 
 
   socket.on("user-send-Messages-person", function (data) {
-    io.sockets.in(data.rm).emit("server-send-chat-room-room", data);
+    socket.emit("server-send-chat-person-yourself", data);
     socket.emit("server-send-Messages-yourself", data);
-    // io.sockets.in(data.my).emit("server-send-chat-person", data);
+    // // io.sockets.in(data.my).emit("server-send-chat-person", data);
     socket.broadcast.emit("server-send-chat-person", data);
-    socket.broadcast.in(data.my).emit("server-send-Messages-person", data);
-    // socket.broadcast.emit("server-send-Messages-person", data);
+    // socket.broadcast.in(data.my).emit("server-send-Messages-person", data);
+    socket.broadcast.emit("server-send-Messages-person", data);
   });
 
   socket.on("user-send-Messages-all", function (data) {
