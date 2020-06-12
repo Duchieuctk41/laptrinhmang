@@ -73,25 +73,33 @@ mongoose.connect(mongoUri, connectOptions)
 
 var i = 0;
 io.on("connection", function (socket, req) {
-  console.log("co nguoi vua ket noi, socket id: " + socket.id);
   i++;
   console.log("co " + i + " nguoi da ket noi");
   socket.emit("server-send-people", i);
+  account.find({ Status: true }, (err, result) => {
+    console.log(result.TaiKhoan);
+    io.sockets.emit("server-update-people-online", result);
+  })
   socket.on("disconnect", function () {
     i--;
     console.log(socket.id + "da ngat ket noi");
     console.log("co " + i + " nguoi da ket noi");
     socket.emit("server-send-people-leave", i);
   });
+  /*hien thi danh sach nguoi dung*/
   socket.on("user-send-username", function () {
     var data = {};
     account.find({}, (err, result) => {
       result.forEach(Element => {
-        data = { P: Element.TaiKhoan };
-        socket.emit("Server-send-username", data.P);
+        data = { P : Element.TaiKhoan, S : Element.Status };
+        socket.emit("Server-send-username", data);
       })
     })
   });
+  /*su kien  khi 1 nguoi log out*/
+  socket.on("user-send-one-person-log-out", function (data) {
+    io.sockets.emit("server-send-one-person-log-out", data);
+  })
 
   socket.on("user-send-room", function () {
     room.find({}, (err, result) => {
@@ -113,10 +121,10 @@ io.on("connection", function (socket, req) {
   socket.on("user-send-create-room", function (data) {
     socket.join(data);
     room.insertMany({ TenNhom: data }, (err, resslut) => {
-      // console.log(resslut);
+      console.log('Client vừa thêm 1 nhóm mới');
     });
     conversation.insertMany({ TenNhom: data }, (err, resslut) => {
-      // console.log(resslut);
+      
     });
     // tao mang tam luu phong moi nhap
     socket.Phong = data;

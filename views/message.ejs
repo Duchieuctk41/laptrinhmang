@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="./images/messenger.jpg" sizes="14x14">
-  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/message.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css">
   <title>Messenger</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -16,11 +16,7 @@
 </head>
 
 <body>
-  <div id="logOut">
-    <form action="/logout" method="post">
-      <input type="button">
-    </form>
-  </div>
+ 
   <!-- <div id="loginForm">
         <div class="content-login-form">
             <h1>what is your name?</h1>
@@ -140,7 +136,12 @@
             </div>
             <div class="user-main-inside text">
               <div class="user-main-name">
-                <p>Chat All</p>
+                <div class="user-main-name-title">
+                  <p>Chat All</p>
+                </div>
+                <div class="user-main-status" id="status">
+                  <!-- <span class="dot"></span> -->
+                </div>
               </div>
               <div class="user-main-message">
                 <div class="user-last-message message">
@@ -321,6 +322,12 @@
             </div>
             <input type="text" id="txtCreateRoom">
             <input type="button" id="btnCreateRoom" value="Tao room">
+           
+            <div class="option-logOut" id="logOut">
+              <form action="/logout" method="POST">
+                <input type="submit" value="LogOut" id="btn-logOut">
+              </form>
+            </div>
           </div>
         </div>
       </div>

@@ -339,6 +339,22 @@
     width: 100%;
     margin-top: 10px;
 }
+.user-main-status{
+width: 20px;
+height: 20px;
+margin-left: 3px;
+float: left;
+position: relative;
+}
+.user-main-status .dot{
+  margin-left: 30%;
+  margin-top: 30%;
+  width: 50%;
+  height: 50%;
+   position: absolute;
+  border-radius: 50%;
+  background-color: #63a824;
+}
 
 .user-main-message {
     width: 100%;
@@ -356,9 +372,14 @@
 .user-last-message.date {
     width: 20%;
 }
+.user-main-name-title{
+width: 80%;
+float: left;
 
+}
 .user-main-name p {
     font-size: 20px;
+    
 }
 
 .user-main-message p {
@@ -813,6 +834,12 @@
     margin-left: 10px;
     color: black;
     font-size: 17px;
+}
+/* phan button logOut */
+.option-logOut {
+    width: 100%;
+    margin-top: 15px;
+    overflow: hidden;
 }
 
 .setting-model {

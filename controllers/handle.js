@@ -1,6 +1,5 @@
 let account = require('../models/Accounts');
 const passport = require('passport');
-var arrayUsers = ['Chat All'];
 var index = require('../index');
 const session = require('express-session');
 const { find, findByIdAndUpdate } = require('../models/Accounts');
@@ -20,8 +19,11 @@ module.exports.postLogin = passport.authenticate('local-Login', {
 
 module.exports.getLogin = function (req, res) {
   if (req.isAuthenticated('local-Login')) {
-    
-    account.updateOne({ TaiKhoan: req.user.TaiKhoan }, { $set: { Status: true } });
+    account.updateMany({ TaiKhoan: req.user.TaiKhoan }, { $set: { Status: true } }, (err, result) => {
+      io.sockets.emit("server-update-people-online", result);
+      console.log(req.user.TaiKhoan + ' vua online');
+    });
+    console.log(req.user.Status);
     return res.render('./message', {
       user: req.user.TaiKhoan
     });
@@ -33,7 +35,10 @@ module.exports.isLogined_next = async function (req, res, next) {
   return res.redirect('/');
 }
 module.exports.Logout = async function (req, res) {
-  account.findOneAndUpdate({ TaiKhoan: req.user.TaiKhoan }, { Status:false });
+  
+  account.updateMany({ TaiKhoan: req.user.TaiKhoan }, { $set: { Status: false } }, (err, result) => {
+    console.log(req.user.TaiKhoan + ' vua logout');
+  });
   req.session.destroy();
   res.redirect('/');
 }

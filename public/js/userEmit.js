@@ -69,8 +69,10 @@ $(document).ready(function () {
     socket.emit("user-send-Messages-person", { my: myId, rm: currentRoom, un: nd });
     $(this).val('');
   });
-  $(document).on("click", "#logOut", function (event) {
-
+  $(document).on("click", "#logOut", function () {
+    var userLogOut = $("#myUser").text();
+    socket.emit("user-send-one-person-log-out", userLogOut);
   });
+  
    
 });

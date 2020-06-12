@@ -1,10 +1,19 @@
 var socket = io("http://localhost:3000");
 
 
-socket.on("Server-send-username", function(data) {
+socket.on("Server-send-username", function (data) {
+  if (data.S == true) {
+    $('#listUser').append('<li class="user-main-container-inside" id="P-' + data.P + '"><div class="user-main-inside photo"><div class="user-main-image"><img src="./images/users.jpg"></div></div><div class="user-main-inside text"><div class="user-main-name"><div class="user-main-name-title"><p>' + data.P + '</p></div><div class="user-main-status" id="status-'+data.P+'"><span class="dot"></span></div></div><div class="user-main-message"><div class="user-last-message message"><p id="last-mes-' + data.P + '">Last seen message</p></div><div class="user-last-message date"><p>Date</p></div></div></div></li>');
+  } else {
+    $('#listUser').append('<li class="user-main-container-inside" id="P-' + data.P + '"><div class="user-main-inside photo"><div class="user-main-image"><img src="./images/users.jpg"></div></div><div class="user-main-inside text"><div class="user-main-name"><div class="user-main-name-title"><p>' + data.P + '</p></div><div class="user-main-status" id="status-' + data.P +'"></div></div><div class="user-main-message"><div class="user-last-message message"><p id="last-mes-' + data.P + '">Last seen message</p></div><div class="user-last-message date"><p>Date</p></div></div></div></li>');
+  } 
+})
+socket.on("server-update-people-online", (data) => {
+  $('#status-' + data.TaiKhoan).html('<span class="dot"></span>');
+})
 
-  $('#listUser').append('<li class="user-main-container-inside" id="P-' + data + '"><div class="user-main-inside photo"><div class="user-main-image"><img src="./images/users.jpg"></div></div><div class="user-main-inside text"><div class="user-main-name"><p>' + data + '</p></div><div class="user-main-message"><div class="user-last-message message"><p id="last-mes-' + data.P + '">Last seen message</p></div><div class="user-last-message date"><p>Date</p></div></div></div></li>');
-  // $('#listUser').append('<li class="user-main-container-inside" id="N-' + data + '"><div class="user-main-inside photo"><div class="user-main-image"><img src="./images/users.jpg"></div></div><div class="user-main-inside text"><div class="user-main-name"><p>' + data + '</p></div><div class="user-main-message"><div class="user-last-message message"><p id="last-mes-' + data.N + '">Last seen message</p></div><div class="user-last-message date"><p>Date</p></div></div></div></li>');
+socket.on("server-send-one-person-log-out",function (data) {
+  $('#status-' + data).html('');
 })
 socket.on("Server-send-room", function (data) {
   $('#listUser').append('<li class="user-main-container-inside" id="N-' + data + '"><div class="user-main-inside photo"><div class="user-main-image"><img src="./images/users.jpg"></div></div><div class="user-main-inside text"><div class="user-main-name"><p>' + data + '</p></div><div class="user-main-message"><div class="user-last-message message"><p id="last-mes-' + data + '">Last seen message</p></div><div class="user-last-message date"><p>Date</p></div></div></div></li>');
