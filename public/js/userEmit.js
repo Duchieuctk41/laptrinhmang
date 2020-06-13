@@ -75,10 +75,19 @@ $(document).ready(function () {
     socket.emit("user-send-Messages-person", { my: myId, rm: currentRoom, un: nd });
     $(this).val('');
   });
-  $(document).on("click", "#logOut", function () {
+  $(document).on("submit", "#logOut", function () {
     var userLogOut = $("#myUser").text();
     socket.emit("user-send-one-person-log-out", userLogOut);
   });
+  // $('#logOut').on("click", function () {
+    
+  // var userLogOut = $("#myUser").text();
+    // socket.emit("user-send-one-person-log-out", userLogOut);
+  // })
+  // $(document).on("submit", 'a', function (event) {
+  //   var userLogOut = $("#myUser").text();
+  //   socket.emit("user-send-one-person-log-out", userLogOut);
+  // });
   
    
 });

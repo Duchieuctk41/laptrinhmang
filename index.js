@@ -227,7 +227,6 @@ io.on("connection", function (socket, req) {
     });
   });
 
-
   socket.on("user-send-Messages-person", function (data) {
     socket.emit("server-send-chat-person-yourself", data);
     socket.emit("server-send-Messages-yourself", data);

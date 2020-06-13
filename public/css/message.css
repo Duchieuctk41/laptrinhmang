@@ -903,14 +903,55 @@ float: left;
     font-size: 16px;
     margin-top: 5px;
 }
-
-.setting-model-logout {
-    border-bottom: 1px solid #eee;
-    padding: 5px;
+.input-room{
+  margin-top: 20px;
+}
+#txtCreateRoom{
+  width:60%;
+  height: 30px;
+  outline: none;
+  margin-left: 5px;
+  margin-right: 15px;
+}
+#btnCreateRoom{
+   background-color: #343A40;
+  border-radius: 4px;  
+  color: #fff;
+  cursor: pointer;
+  padding: 6px 12px;
+  font-size: small;
+  font-weight: bold;
+}
+#btnCreateRoom:hover{
+   background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet, red);
+  animation:slidebg 2s linear infinite;
 }
 
-.setting-model-logout p {
-    text-align: center;
-    font-size: 16px;
-    margin-top: 5px;
+.option-logOut {
+  /* text-align: center; */
+  height: 100px;
 }
+
+.rainbow{
+  margin-top: 5px;
+  margin-left: 5px;
+  background-color: #343A40;
+  border-radius: 4px;  
+  color: #fff;
+  cursor: pointer;
+  padding: 6px 12px;
+  font-size: medium;
+  font-weight: bold;
+}
+.rainbow-2:hover{
+  background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet, red);
+  animation:slidebg 2s linear infinite;
+}
+
+@keyframes slidebg {
+  to {
+    background-position:20vw;lo
+  }
+}
+
+

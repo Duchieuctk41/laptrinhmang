@@ -7,6 +7,7 @@
   <link rel="icon" href="./images/messenger.jpg" sizes="14x14">
   <link rel="stylesheet" href="./css/message.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css">
+  <link rel="stylesheet" href="./scss/input.css">
   <title>Messenger</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
@@ -320,12 +321,15 @@
                 </div>
               </div>
             </div>
-            <input type="text" id="txtCreateRoom">
-            <input type="button" id="btnCreateRoom" value="Tao room">
-           
+           <div class="input-room">
+              <input type="text" id="txtCreateRoom">
+              <input  type="button" id="btnCreateRoom" value="Tao room">
+           </div>
             <div class="option-logOut" id="logOut">
               <form action="/logout" method="POST">
-                <input type="submit" value="LogOut" id="btn-logOut">
+                
+                  <input value="LogOut" type="submit" id="logOut"class="rainbow rainbow-2"></input>
+                
               </form>
             </div>
           </div>
