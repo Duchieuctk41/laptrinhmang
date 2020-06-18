@@ -75,6 +75,7 @@ mongoose.connect(mongoUri, connectOptions)
 var i = 0;
 io.on("connection", function (socket, req) {
   i++;
+  console.log(socket.id);
   console.log("co " + i + " nguoi da ket noi");
   socket.emit("server-send-people", i);
   account.find({ Status: true }, (err, result) => {
