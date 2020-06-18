@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+require('dotenv').config();
 const bodyParser = require("body-parser");
 const direction = require('./routes/direction.router');
 const server = require('http').Server(app);
