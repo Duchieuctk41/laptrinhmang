@@ -48,7 +48,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(direction);
 require('./configs/passport')(passport);
-server.listen(port, function () {
+server.listen(process.env.PORT, function () {
   console.log('Server listening on port ' + port);
 });
 const mongoUri = 'mongodb+srv://duchieu:123@cluster0-jja2l.mongodb.net/Chat?retryWrites=true&w=majority';
@@ -93,7 +93,7 @@ io.on("connection", function (socket, req) {
     var data = {};
     account.find({}, (err, result) => {
       result.forEach(Element => {
-        data = { P : Element.TaiKhoan, S : Element.Status };
+        data = { P: Element.TaiKhoan, S: Element.Status };
         socket.emit("Server-send-username", data);
       })
     })
@@ -126,7 +126,7 @@ io.on("connection", function (socket, req) {
       console.log('Client vừa thêm 1 nhóm mới');
     });
     conversation.insertMany({ TenNhom: data }, (err, resslut) => {
-      
+
     });
     // tao mang tam luu phong moi nhap
     socket.Phong = data;
@@ -146,8 +146,8 @@ io.on("connection", function (socket, req) {
     room.updateMany({ TenNhom: crR }, { $addToSet: { Name: data.userJoin } }, (err, result) => {
     });
     conversation.findOne({ TenNhom: crR }, (err, result) => {
-     socket.emit("server-send-history-chat-room", result);
-        // console.log(result);
+      socket.emit("server-send-history-chat-room", result);
+      // console.log(result);
     })
     room.find({}, (err, result) => {
       var data = {};
@@ -167,11 +167,11 @@ io.on("connection", function (socket, req) {
     var crR = data.toPerson.slice(2) + 'va' + data.myPerson;
     var crR2 = data.myPerson + 'va' + data.toPerson.slice(2);
     console.log(crR2);
-    
+
     // socket.join(crR2);
     //kiem tra database da ton tai chua, co bi trung ko
     privateMessage.find({ TenNhom: crR2 }, (err, result) => {
-      
+
       privateMessage.find({ TenNhom: crR }, (error, res) => {
         if (result.length == 0 && res.length == 0) {
           socket.join(crR);
@@ -199,7 +199,7 @@ io.on("connection", function (socket, req) {
     socket.emit("server-send-Messages-yourself", data);
     socket.broadcast.in(data.rm).emit("server-send-room-friends", data);
   });
-/*them tin nhan moi vao database*/
+  /*them tin nhan moi vao database*/
   socket.on("user-send-conversation-private", function (data) {
 
     var crR = data.rm + 'va' + data.tp;
@@ -214,7 +214,7 @@ io.on("connection", function (socket, req) {
   });
 
   socket.on("user-send-conversation-room", function (data) {
-    
+
     var crR = data.rm.slice(2);
     conversation.updateMany({ TenNhom: crR }, { $push: { namePerson: data.nm, dialogue: data.ct } }, (err, result) => {
       console.log('them tin nhom thanh cong');
