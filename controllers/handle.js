@@ -1,6 +1,6 @@
 let account = require('../models/Accounts');
 const passport = require('passport');
-var index = require('../index');
+var index = require('../app');
 const session = require('express-session');
 const { find, findByIdAndUpdate } = require('../models/Accounts');
 
