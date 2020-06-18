@@ -1,4 +1,4 @@
-var socket = io("http://localhost:3000");
+var socket = io("https://chat-realtime-hieu.herokuapp.com/");
 
 
 socket.on("Server-send-username", function (data) {
